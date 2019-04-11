@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ManagedServiceIdentityTest": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}"
+    }
+  }
+}

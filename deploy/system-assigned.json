@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appName": {
+            "defaultValue": "ia-msi-test",
+            "type": "string"
+        },
+        "dockerRepository": {
+            "defaultValue": "interaction",
+            "type": "string"
+        },
+        "dockerImage": {
+            "defaultValue": "msi-test",
+            "type": "string"
+        },
+        "dockerImageTag": {
+            "defaultValue": "v2",
+            "type": "string"
+        },
+        "dockerResourceGroup": {
+            "defaultValue": "DockerRegistry",
+            "type": "string"
+        },
+        "dockerSubscription": {
+            "defaultValue": "bf988e23-7a52-464f-8529-607f1571711d",
+            "type": "string"
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "dockerServer": "[concat(parameters('dockerRepository'), '.azurecr.io')]",
+        "servicePlanName": "[concat(parameters('appName'), '-servicePlan')]",
+        "servicePlanId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "S1"
+            },
+            "kind": "linux",
+            "name": "[variables('servicePlanName')]",
+            "apiVersion": "2016-09-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "reserved": true,
+                "clientAffinityEnabled": false,
+                "httpsOnly": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "kind": "app,linux,container",
+            "name": "[parameters('appName')]",
+            "apiVersion": "2016-08-01",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "serverFarmId": "[variables('servicePlanId')]",
+                "httpsOnly": true,
+                "clientAffinityEnabled": false,
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "linuxFxVersion": "[concat('DOCKER|', variables('dockerServer'), '/', parameters('dockerImage'), ':', parameters('dockerImageTag'))]",
+                    "minTlsVersion": "1.2",
+                    "http20Enabled": true,
+                    "ftpsState": "Disabled",
+                    "appSettings": [
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "[concat('https://', variables('dockerServer'))]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "[parameters('dockerRepository')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "[listCredentials(resourceId(parameters('dockerSubscription'), parameters('dockerResourceGroup'), 'Microsoft.ContainerRegistry/registries', parameters('dockerRepository')), '2017-10-01').passwords[0].value]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[variables('servicePlanId')]"
+            ]
+        }
+    ]
+}
