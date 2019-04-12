@@ -2,30 +2,30 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "appName": {
-            "defaultValue": "ia-msi-test",
-            "type": "string"
-        },
-        "dockerRepository": {
-            "defaultValue": "interaction",
-            "type": "string"
-        },
+      "appName": {
+        "defaultValue": "lplinux-msi",
+        "type": "string"
+      },
+      "dockerRepository": {
+        "defaultValue": "LPTestContainerReg",
+        "type": "string"
+      },
         "dockerImage": {
-            "defaultValue": "msi-test",
+            "defaultValue": "asp",
             "type": "string"
         },
         "dockerImageTag": {
-            "defaultValue": "v2",
+            "defaultValue": "latest",
             "type": "string"
         },
         "dockerResourceGroup": {
-            "defaultValue": "DockerRegistry",
+            "defaultValue": "lplinux",
             "type": "string"
         },
-        "dockerSubscription": {
-            "defaultValue": "bf988e23-7a52-464f-8529-607f1571711d",
-            "type": "string"
-        },
+      "dockerSubscription": {
+        "defaultValue": "bad7ae36-0b55-466a-b085-cf72954dd5fcd",
+        "type": "string"
+      },
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "string"
