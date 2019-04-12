@@ -15,7 +15,7 @@ namespace ManagedServiceIdentityTest.Controllers
     public class IdentityController : ControllerBase
     {
         const string RESOURCE = "https://vault.azure.net";
-        const string API_VERSION = "2017-09-01";
+        const string API_VERSION = "2017-09-10";
         static readonly MediaTypeFormatter s_formatter = new JsonMediaTypeFormatter();
 
         // GET api/values
